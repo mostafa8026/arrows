@@ -26,7 +26,7 @@
       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
       var s = document.getElementsByTagName( 'script' )[0];
       s.parentNode.insertBefore( ga, s );
-    })();
+    }) // ();
 
   </script>
 </head>
@@ -49,7 +49,7 @@
     <h3>Edit/Export markup</h3>
   </div>
   <div class="modal-body">
-    <textarea class="code">Some text</textarea>
+    <textarea class="code" rows="10" cols="80">Some text</textarea>
   </div>
   <div class="modal-footer">
     <a href="#" class="btn cancel">Cancel</a>
@@ -137,16 +137,19 @@
     <h3>Export as Cypher</h3>
   </div>
   <div class="modal-body">
-    <textarea class="code">Some Text</textarea>
+    <textarea class="code" rows="10" cols="80">Some Text</textarea>
   </div>
   <div class="modal-footer">
-    <a href="#" class="btn cancel btn-primary">Close</a>
+    <a href="#" class="btn cancel">Cancel</a>
+    <a href="#" class="btn btn-primary" id="save_cypher">Save</a>
     <a href="#" target="_blank" class="btn" id="open_console">Open in Console</a>
   </div>
 </div>
 
 <div id="canvas"></div>
 
-
+<div id="tmp">
+<ul class="graph-diagram-markup" data-internal-scale="1" data-external-scale="1"></ul>
+</div>
 </body>
 </html>
