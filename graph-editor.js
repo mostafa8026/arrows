@@ -411,9 +411,9 @@ window.onload = function()
 				node.caption(nodeData["_labels"].join(" "))
 				Object.keys(nodeData).forEach(function(prop) {
 					if (!["_id","class","x","y","_labels"].includes(prop)) {
-                        var value = ;
+                        var value = nodeData[prop];
                         if (typeof(value) == "string" && value.length > 20) value = value.substring(0,20)+" ...";
-						node.properties().set(prop,convert(nodeData[prop]));
+						node.properties().set(prop,convert(value));
 					}
 				})
 		})
