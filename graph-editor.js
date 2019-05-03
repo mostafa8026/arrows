@@ -374,7 +374,7 @@ window.onload = function()
         cypher = cypher.replace(/\n  /g," ");
         var url="http://console.neo4j.org"+
             "?init=" + encodeURIComponent(cypher)+
-            "&query=" + encodeURIComponent("start n=node(*) return n");
+            "&query=" + encodeURIComponent("MATCH (n) OPTIONAL MATCH (n)-[r]->(m) RETURN n,r,m");
         d3.select( "#open_console" )
                     .attr( "href", url );
         return true;
