@@ -12,29 +12,34 @@ The library you need is `graph-diagram.js`. It depends on D3, so you'll need tha
 
 Markup looks like this, enclosed in a `<figure>` tag:
 
-    <figure class="graph-diagram">
-      <ul class="graph-diagram-markup">
-        <li class="node" data-node-id="0" data-x="0" data-y="0">
-          <span class="caption">A</span>
-        </li>
-        <li class="node" data-node-id="1" data-x="50" data-y="0">
-          <span class="caption">B</span>
-        </li>
-        <li class="relationship" data-from="0" data-to="1">
-          <span class="type">R</span>
-        </li>
-      </ul>
-    </figure>
+```html
+<figure class="graph-diagram">
+  <ul class="graph-diagram-markup">
+    <li class="node" data-node-id="0" data-x="0" data-y="0">
+      <span class="caption">A</span>
+    </li>
+    <li class="node" data-node-id="1" data-x="50" data-y="0">
+      <span class="caption">B</span>
+    </li>
+    <li class="relationship" data-from="0" data-to="1">
+      <span class="type">R</span>
+    </li>
+  </ul>
+</figure>
+```
+
 
 See [tests.html](http://www.apcjones.com/arrows/tests.html) for examples of what you can do 
 with markup and styling.
 
 At the end of your page, or in a suitable event handler, call a bit of framework code:
 
-    <script type="text/javascript">
-      d3.selectAll( "figure.graph-diagram" )
-              .call( gd.figure() );
-    </script>
+```html
+<script type="text/javascript">
+  d3.selectAll( "figure.graph-diagram" )
+          .call( gd.figure() );
+</script>
+```
 
 There's also a complete working example in [example.html](http://www.apcjones.com/arrows/example.html).
 
