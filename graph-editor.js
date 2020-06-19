@@ -455,11 +455,7 @@ window.onload = function()
         appendModalBackdrop();
         d3.select( ".modal.export-cypher" ).classed( "hide", false );
 
-<<<<<<< HEAD
-        var statement = gd.cypher(graphModel).replace("``", "`").replace("``", "`");
-=======
         var statement = gd.formatCypher(graphModel);
->>>>>>> 47ff1907a7154404930d9c5d8bc6aa05d519364c
         d3.select( ".export-cypher .modal-body textarea.code" )
             .attr( "rows", Math.max(10,statement.split( "\n" ).length) )
             .node().value = statement;
