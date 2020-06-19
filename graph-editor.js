@@ -323,7 +323,9 @@ window.onload = function()
     }
 
     d3.selectAll( ".btn.cancel" ).on( "click", cancelModal );
-    d3.selectAll( ".modal" ).on( "keyup", function() { if ( d3.event.keyCode === 27 ) cancelModal(); } );
+    d3.selectAll( ".modal" ).on( "keyup", 
+		function() { if ( d3.event.keyCode === 27 ) cancelModal(); }
+	);
 
     function appendModalBackdrop()
     {
@@ -339,7 +341,7 @@ window.onload = function()
 
         var markup = formatMarkup();
         d3.select( "textarea.code" )
-            .attr( "rows", markup.split( "\n" ).length * 2 )
+            .attr( "rows", Math.max(10,markup.split( "\n" ).length * 2) )
             .node().value = markup;
     };
 
@@ -377,6 +379,12 @@ window.onload = function()
             return String.fromCharCode('0x' + p1)
           }))
       }
+      
+    var exportSvg = function ()
+    {
+        var rawSvg = new XMLSerializer().serializeToString(d3.select("#canvas svg" ).node());
+        window.open( "data:image/svg+xml;base64," + btoa( rawSvg ) );
+    };
 
     var openConsoleWithCypher = function (evt)
     {
@@ -390,6 +398,56 @@ window.onload = function()
         return true;
     };
 
+    var useCypherFromEditor = function ()
+    {
+        var cypher = d3.select( ".export-cypher .modal-body textarea.code" ).node().value;
+        d3Model = gd.parseCypher( cypher );
+        graphModel = modelFromD3( d3Model );
+        save(formatMarkup());
+        draw();
+        cancelModal();
+    };
+
+	var modelFromD3 = function( data ) {
+		function convert(value) {
+            if (typeof(value) == "string" && value.length > 20) return value.substring(0,20)+" ...";
+            return value;
+		}
+		var width = 500;
+		var height = 500;
+        var progress = 0;
+        var selection = d3.select("#tmp ul.graph-diagram-markup");
+        var model = gd.markup.parse(selection); // only to copy style attributes
+		data.nodes.forEach(function(nodeData) {
+			    var id = parseInt(nodeData["_id"]);
+                var node = model.createNode(id);
+                node.class("node");
+                var angle = 0.6 * Math.PI * progress;
+                node.x(nodeData["x"] || Math.cos(angle) * width * 0.3 * Math.round(1 + progress / 3) + width);
+                node.y(nodeData["y"] || Math.sin(angle) * height * 0.3 * Math.round(1 + progress / 3) + height);
+                progress += 1;
+				node.caption(nodeData["_labels"].join(" "))
+				Object.keys(nodeData).forEach(function(prop) {
+					if (!["_id","class","x","y","_labels"].includes(prop)) {
+                        var value = nodeData[prop];
+                        if (typeof(value) == "string" && value.length > 20) value = value.substring(0,20)+" ...";
+						node.properties().set(prop,convert(value));
+					}
+				})
+		})
+		data.links.forEach(function(relData) {
+                var rel = model.createRelationship(model.lookupNode(relData["source"]),model.lookupNode(relData["target"]));
+                rel.class("relationship");
+				rel.relationshipType(relData["_type"])
+				Object.keys(relData).forEach(function(prop) {
+					if (!["_id","class","x","y","_type","source","target"].includes(prop)) {
+						rel.properties().set(prop,convert(relData[prop]));
+					}
+				})
+		})
+		return model;
+	}
+
     d3.select( "#open_console" ).on( "click", openConsoleWithCypher );
 
     var exportCypher = function ()
@@ -397,9 +455,13 @@ window.onload = function()
         appendModalBackdrop();
         d3.select( ".modal.export-cypher" ).classed( "hide", false );
 
+<<<<<<< HEAD
         var statement = gd.cypher(graphModel).replace("``", "`").replace("``", "`");
+=======
+        var statement = gd.formatCypher(graphModel);
+>>>>>>> 47ff1907a7154404930d9c5d8bc6aa05d519364c
         d3.select( ".export-cypher .modal-body textarea.code" )
-            .attr( "rows", statement.split( "\n" ).length )
+            .attr( "rows", Math.max(10,statement.split( "\n" ).length) )
             .node().value = statement;
     };
 
@@ -437,6 +499,9 @@ window.onload = function()
     {
         d3.event.stopPropagation();
     } );
+
+    d3.select( "#save_markup" ).on( "click", useMarkupFromMarkupEditor );
+    d3.select( "#save_cypher" ).on( "click", useCypherFromEditor );
 
     draw();
 };
