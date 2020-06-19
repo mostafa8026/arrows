@@ -364,9 +364,13 @@ window.onload = function()
     d3.select( "#save_markup" ).on( "click", useMarkupFromMarkupEditor );
 
     function updateSvgDownloadLink() {
-      var rawSvg = new XMLSerializer().serializeToString(d3.select("#canvas svg" ).node());
-      d3.select("#downloadSvgButton").attr('href', "data:image/svg+xml;base64," + btoa( b64EncodeUnicode(rawSvg) ));
+      let cloned = d3.select("#canvas svg").node().cloneNode(true);
+      let comment = document.createComment(`This is the source for this SVG to be used with arrow: \n ${formatMarkup()}`);
+      cloned.appendChild(comment);
+      var rawSvg = new XMLSerializer().serializeToString(cloned);
+      d3.select("#downloadSvgButton").attr('href', "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent( rawSvg ))));
     }
+
     function b64EncodeUnicode (str) {
         return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
           function toSolidBytes (match, p1) {
@@ -377,10 +381,10 @@ window.onload = function()
     var openConsoleWithCypher = function (evt)
     {
         var cypher = d3.select(".export-cypher .modal-body textarea.code").node().value;
-        cypher = cypher.replace(/\n  /g," ");
+        cypher = cypher.replace(/\n  /g," ").replace("``", "`");
         var url="http://console.neo4j.org"+
             "?init=" + encodeURIComponent(cypher)+
-            "&query=" + encodeURIComponent("start n=node(*) return n");
+            "&query=" + encodeURIComponent("MATCH (n) OPTIONAL MATCH (n)-[r]->(m) RETURN n,r,m");
         d3.select( "#open_console" )
                     .attr( "href", url );
         return true;
@@ -393,7 +397,7 @@ window.onload = function()
         appendModalBackdrop();
         d3.select( ".modal.export-cypher" ).classed( "hide", false );
 
-        var statement = gd.cypher(graphModel);
+        var statement = gd.cypher(graphModel).replace("``", "`").replace("``", "`");
         d3.select( ".export-cypher .modal-body textarea.code" )
             .attr( "rows", statement.split( "\n" ).length )
             .node().value = statement;
