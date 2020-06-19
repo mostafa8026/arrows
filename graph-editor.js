@@ -364,7 +364,10 @@ window.onload = function()
     d3.select( "#save_markup" ).on( "click", useMarkupFromMarkupEditor );
 
     function updateSvgDownloadLink() {
-      var rawSvg = new XMLSerializer().serializeToString(d3.select("#canvas svg" ).node());
+      let cloned = d3.select("#canvas svg").node().cloneNode(true);
+      let comment = document.createComment(`This is the source for this SVG to be used with arrow: \n ${formatMarkup()}`);
+      cloned.appendChild(comment);
+      var rawSvg = new XMLSerializer().serializeToString(cloned);
       d3.select("#downloadSvgButton").attr('href', "data:image/svg+xml;base64," + btoa( rawSvg ));
     }
 
